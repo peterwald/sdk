@@ -139,7 +139,10 @@ internal static class TestCommandOptions
             msbuildArgs,
             Device: parseResult.GetValue(definition.DeviceOption),
             ListDevices: parseResult.GetValue(definition.ListDevicesOption),
-            EnvironmentVariables: parseResult.GetValue(definition.EnvOption) ?? ImmutableDictionary<string, string>.Empty);
+            EnvironmentVariables: parseResult.GetValue(definition.EnvOption) ?? ImmutableDictionary<string, string>.Empty)
+        {
+            UseFastBuild = parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption)
+        };
     }
 
 #if !CLI_AOT
