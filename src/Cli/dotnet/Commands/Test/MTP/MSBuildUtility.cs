@@ -96,6 +96,11 @@ internal static class MSBuildUtility
         projectFilePath = Path.GetFullPath(projectFilePath, buildSession.WorkingDirectory);
         if (VirtualProjectBuilder.IsValidEntryPointPath(projectFilePath))
         {
+            if (buildOptions.UseFastBuild)
+            {
+                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+            }
+
             return GetProjectsFromFile(projectFilePath, buildOptions, buildSession);
         }
 
@@ -327,6 +332,14 @@ internal static class MSBuildUtility
                         project.GetPropertyValue(Constants.IntermediateOutputPath));
                     parsedMSBuildArgs = EnvironmentVariablesToMSBuild.AddPropsFileToArgs(parsedMSBuildArgs, envPropsFile);
                 }
+            }
+
+            if (buildOptions.UseFastBuild)
+            {
+                return FastBuildCommand.Run(
+                    filePath,
+                    parsedMSBuildArgs.CloneWithExplicitArgs([.. parsedMSBuildArgs.OtherMSBuildArgs.Where(arg => arg != filePath)]),
+                    buildOptions.HasNoRestore);
             }
 
             var command = new RestoringCommand(
