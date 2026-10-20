@@ -1987,6 +1987,11 @@ O padrão é "false." No entanto, ao direcionar para .NET 7 ou inferior, o padr�
         <target state="translated">A configuração a ser usada para executar testes. O padrão para a maioria dos projetos é 'Debug'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
+        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
+      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">A estrutura de destino para a qual a execução de testes ocorrerá. A estrutura de destino também precisa ser especificada no arquivo de projeto.</target>

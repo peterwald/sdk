@@ -63,7 +63,10 @@ internal record BuildOptions(
     IEnumerable<string> MSBuildArgs,
     string? Device,
     bool ListDevices,
-    IReadOnlyDictionary<string, string> EnvironmentVariables);
+    IReadOnlyDictionary<string, string> EnvironmentVariables)
+{
+    public bool UseFastBuild { get; init; }
+}
 
 internal readonly record struct TestApplicationPolicy(
     bool FailOnAllSkippedTests,

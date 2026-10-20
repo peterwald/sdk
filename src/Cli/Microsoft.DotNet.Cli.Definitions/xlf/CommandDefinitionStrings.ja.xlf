@@ -1987,6 +1987,11 @@ The default is 'false.' However, when targeting .NET 7 or lower, the default is 
         <target state="translated">テストの実行に使用する構成。ほとんどのプロジェクトで、既定値は 'Debug' です。</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
+        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
+      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">テストを実行する対象のターゲット フレームワーク。ターゲット フレームワークはプロジェクト ファイルでも指定する必要があります。</target>

@@ -25,6 +25,42 @@ public class TestCommand(
         advertiseWorkloadUpdates: null,
         CommandServices.CreateDefault())
 {
+    private MSBuildArgs? _fastBuildArgs;
+    private bool _fastBuildNoRestore;
+    private IReadOnlyDictionary<string, string>? _fastBuildEnvironmentVariables;
+
+    public override int Execute()
+    {
+        if (_fastBuildArgs is { } fastBuildArgs)
+        {
+            List<string> paths = [.. fastBuildArgs.OtherMSBuildArgs.Where(argument =>
+                !argument.StartsWith('-') &&
+                (!argument.StartsWith('/') || File.Exists(argument) || Directory.Exists(argument)))];
+            if (paths.Count > 1)
+            {
+                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+            }
+
+            PathOptions pathOptions = new(paths.SingleOrDefault(), null, null, null, default, null, null);
+            if (!ValidationUtility.ValidateBuildPathOptions(pathOptions, out string? filePath, out _))
+            {
+                return ExitCode.GenericFailure;
+            }
+
+            int buildExitCode = FastBuildCommand.Run(
+                filePath,
+                fastBuildArgs.CloneWithExplicitArgs([.. fastBuildArgs.OtherMSBuildArgs.Except(paths)]),
+                _fastBuildNoRestore,
+                _fastBuildEnvironmentVariables);
+            if (buildExitCode != 0)
+            {
+                return buildExitCode;
+            }
+        }
+
+        return base.Execute();
+    }
+
     public static int Run(ParseResult parseResult)
     {
         parseResult.HandleDebugSwitch();
@@ -56,6 +92,12 @@ public class TestCommand(
         // When we have settings, we want to exclude the '--' as it doesn't end up in unmatched tokens, so we pass settings.Length - 1
         if (ContainsBuiltTestSources(parseResult, GetSettingsCount(settings)))
         {
+            var definition = (TestCommandDefinition.VSTest)parseResult.CommandResult.Command;
+            if (parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption))
+            {
+                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+            }
+
             return ForwardToVSTestConsole(parseResult, args, settings, testSessionCorrelationId);
         }
 
@@ -256,14 +298,51 @@ public class TestCommand(
             CommonOptions.CreateNoLogoOption())
             .CloneWithNoLogo(true);
 
+        bool useFastBuild = result.GetValue(definition.FastBuildOption) && !result.GetValue(definition.NoBuildOption);
         TestCommand testCommand = new(
-            parsedMSBuildArgs,
-            noRestore,
+            useFastBuild
+                ? parsedMSBuildArgs.CloneWithAdditionalProperties(new(new Dictionary<string, string>
+                {
+                    ["VSTestNoBuild"] = "true"
+                }))
+                : parsedMSBuildArgs,
+            noRestore || useFastBuild,
             msbuildPath);
+
+        if (useFastBuild)
+        {
+            // Test-only properties include a fresh session ID and must not invalidate the build cache.
+            Option[] buildOptions =
+            [
+                definition.ConfigurationOption,
+                definition.FrameworkOption,
+                definition.TargetPlatformOptions.RuntimeOption,
+                definition.TargetPlatformOptions.ArchitectureOption,
+                definition.TargetPlatformOptions.OperatingSystemOption,
+                definition.OutputOption,
+                definition.ArtifactsPathOption,
+                definition.NoDependenciesOption,
+                definition.PropertiesOption,
+                definition.InteractiveOption,
+                definition.VerbosityOption,
+                definition.NoRestoreOption,
+                definition.DisableBuildServersOption,
+                definition.VsTestTargetOption
+            ];
+            testCommand._fastBuildArgs = MSBuildArgs.AnalyzeMSBuildArguments(
+                result.OptionValuesToBeForwarded(buildOptions).Concat(unMatchedNonSettingsArgs),
+                CommonOptions.CreatePropertyOption(),
+                CommonOptions.CreateRestorePropertyOption(),
+                CommonOptions.CreateRequiredMSBuildTargetOption("VSTest"),
+                CommonOptions.CreateVerbosityOption(),
+                CommonOptions.CreateNoLogoOption());
+            testCommand._fastBuildNoRestore = noRestore;
+        }
 
         // Apply environment variables provided by the user via --environment (-e) option, if present
         if (result.GetValue(definition.TestEnvOption) is { } environmentVariables)
         {
+            testCommand._fastBuildEnvironmentVariables = environmentVariables;
             foreach (var (name, value) in environmentVariables)
             {
                 testCommand.EnvironmentVariable(name, value);

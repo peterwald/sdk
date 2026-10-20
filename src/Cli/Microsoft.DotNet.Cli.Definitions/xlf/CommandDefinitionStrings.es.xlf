@@ -1987,6 +1987,11 @@ El valor predeterminado es "false". Sin embargo, cuando el destino es .NET 7 o i
         <target state="translated">La configuración que se usará para ejecutar pruebas. El valor predeterminado para la mayoría de los proyectos es "Debug".</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
+        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
+      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">La plataforma de destino para la que se ejecutan pruebas. La plataforma de destino se debe especificar en el archivo de proyecto.</target>

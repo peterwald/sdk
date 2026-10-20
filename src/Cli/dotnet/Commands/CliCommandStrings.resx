@@ -2852,4 +2852,16 @@ Proceed?</value>
   <data name="CmdAffectedTestsResponseFilesMustBeConsistent" xml:space="preserve">
     <value>Forwarded response files must select the same affected-test operation for every test application. Specify '--collect-test-map' or '--affected-tests' directly on 'dotnet test' instead.</value>
   </data>
+  <data name="TestFastBuildRequiresProject" xml:space="preserve">
+    <value>The option '--fastbuild' requires a project or solution to build. It cannot build test assemblies or file-based apps. Use '--no-build' to skip building.</value>
+    <comment>{Locked="--fastbuild"} {Locked="--no-build"}</comment>
+  </data>
+  <data name="TestFastBuildToolNotFound" xml:space="preserve">
+    <value>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</value>
+    <comment>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</comment>
+  </data>
+  <data name="TestFastBuildUnsupportedArgument" xml:space="preserve">
+    <value>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</value>
+    <comment>{0} is the unsupported build argument. {Locked="--fastbuild"}</comment>
+  </data>
 </root>

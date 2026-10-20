@@ -3387,6 +3387,21 @@ Su proyecto tiene como destino varias plataformas. Especifique la que quiere usa
         <target state="translated">{0} pruebas detectadas.</target>
         <note>0 is number of tests</note>
       </trans-unit>
+      <trans-unit id="TestFastBuildRequiresProject">
+        <source>The option '--fastbuild' requires a project or solution to build. It cannot build test assemblies or file-based apps. Use '--no-build' to skip building.</source>
+        <target state="new">The option '--fastbuild' requires a project or solution to build. It cannot build test assemblies or file-based apps. Use '--no-build' to skip building.</target>
+        <note>{Locked="--fastbuild"} {Locked="--no-build"}</note>
+      </trans-unit>
+      <trans-unit id="TestFastBuildToolNotFound">
+        <source>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</source>
+        <target state="new">The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</target>
+        <note>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</note>
+      </trans-unit>
+      <trans-unit id="TestFastBuildUnsupportedArgument">
+        <source>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</source>
+        <target state="new">The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</target>
+        <note>{0} is the unsupported build argument. {Locked="--fastbuild"}</note>
+      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">La plataforma de destino para la que se ejecutan pruebas. La plataforma de destino se debe especificar en el archivo de proyecto.</target>

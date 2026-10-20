@@ -1987,6 +1987,11 @@ La valeur par défaut est « false ». Toutefois, lorsque vous ciblez .NET 7 o
         <target state="translated">Configuration à utiliser pour l'exécution des tests. La valeur par défaut pour la plupart des projets est 'Debug'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
+        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
+      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">Framework cible pour lequel les tests sont exécutés. Le framework cible doit également être spécifié dans le fichier projet.</target>

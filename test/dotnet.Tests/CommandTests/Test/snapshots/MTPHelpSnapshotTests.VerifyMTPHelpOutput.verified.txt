@@ -5,6 +5,7 @@ Usage:
   dotnet test [options] [platform options] [extension options]
 
 Options:
+  --fastbuild                                     Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.
   --project <PROJECT_OR_SOLUTION_PATH>            Defines the path of the project, solution, or C# file-based app to test. Use path to the file, or path to the directory containing the project or solution file. If not specified, it defaults to the current directory.
   --solution <SOLUTION_PATH>                      Defines the path of the solution file to test. Use path to the solution file, or path to the directory containing the solution file. If not specified, it defaults to the current directory.
   --test-modules <EXPRESSION>                     Run tests for the specified test modules.

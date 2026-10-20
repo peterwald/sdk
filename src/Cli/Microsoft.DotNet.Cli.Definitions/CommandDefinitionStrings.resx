@@ -1563,4 +1563,8 @@ If command is specified without the argument, it lists all the template packages
   <data name="SDKSchemaCommandDefinition" xml:space="preserve">
     <value>Display the command schema as JSON.</value>
   </data>
+  <data name="TestFastBuildOptionDescription" xml:space="preserve">
+    <value>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</value>
+    <comment>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</comment>
+  </data>
 </root>

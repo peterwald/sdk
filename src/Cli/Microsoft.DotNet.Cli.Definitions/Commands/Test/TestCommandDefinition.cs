@@ -24,11 +24,18 @@ internal abstract partial class TestCommandDefinition : Command
 
     public readonly Option<Utils.VerbosityOptions?> VerbosityOption = CommonOptions.CreateVerbosityOption();
 
+    public readonly Option<bool> FastBuildOption = new("--fastbuild")
+    {
+        Description = CommandDefinitionStrings.TestFastBuildOptionDescription,
+        Arity = ArgumentArity.Zero
+    };
+
     public TestCommandDefinition(string description)
         : base("test", description)
     {
         this.DocsLink = Link;
         TreatUnmatchedTokensAsErrors = false;
+        Options.Add(FastBuildOption);
     }
 
     public static TestCommandDefinition Create()
