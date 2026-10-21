@@ -38,7 +38,7 @@ public class TestCommand(
                 (!argument.StartsWith('/') || File.Exists(argument) || Directory.Exists(argument)))];
             if (paths.Count > 1)
             {
-                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+                throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }
 
             PathOptions pathOptions = new(paths.SingleOrDefault(), null, null, null, default, null, null);
@@ -51,6 +51,7 @@ public class TestCommand(
                 filePath,
                 fastBuildArgs.CloneWithExplicitArgs([.. fastBuildArgs.OtherMSBuildArgs.Except(paths)]),
                 _fastBuildNoRestore,
+                "VSTest",
                 _fastBuildEnvironmentVariables);
             if (buildExitCode != 0)
             {
@@ -95,7 +96,7 @@ public class TestCommand(
             var definition = (TestCommandDefinition.VSTest)parseResult.CommandResult.Command;
             if (parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption))
             {
-                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+                throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }
 
             return ForwardToVSTestConsole(parseResult, args, settings, testSessionCorrelationId);

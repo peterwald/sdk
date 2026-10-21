@@ -62,6 +62,11 @@
         <target state="translated">Konfigurace použitá k sestavení projektu. Výchozí možností pro většinu projektů je Debug.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
+        <note>{Locked="Microsoft.FastBuild"}</note>
+      </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
         <target state="translated">Cílová architektura pro sestavení. Cílová architektura musí být určená také v souboru projektu.</target>

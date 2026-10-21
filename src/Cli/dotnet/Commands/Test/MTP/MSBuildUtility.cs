@@ -98,7 +98,7 @@ internal static class MSBuildUtility
         {
             if (buildOptions.UseFastBuild)
             {
-                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+                throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }
 
             return GetProjectsFromFile(projectFilePath, buildOptions, buildSession);
@@ -339,7 +339,8 @@ internal static class MSBuildUtility
                 return FastBuildCommand.Run(
                     filePath,
                     parsedMSBuildArgs.CloneWithExplicitArgs([.. parsedMSBuildArgs.OtherMSBuildArgs.Where(arg => arg != filePath)]),
-                    buildOptions.HasNoRestore);
+                    buildOptions.HasNoRestore,
+                    TestCommandDefinition.MicrosoftTestingPlatform.BuildTargetName);
             }
 
             var command = new RestoringCommand(
