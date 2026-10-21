@@ -57,33 +57,39 @@ Run the following command from the root of the repository:
 
 The build script will output a .NET Core installation to `artifacts\bin\redist\Debug\dotnet` that will include any local changes to the .NET Core CLI.
 
-### Opt-in FastBuild for `dotnet test`
+### Opt-in FastBuild for `dotnet build` and `dotnet test`
 
-`dotnet test --fastbuild` uses a separately installed `Microsoft.FastBuild` .NET tool
-to build before running tests. Install the tool from a package source that contains it,
+`dotnet build --fastbuild` and `dotnet test --fastbuild` use a separately installed
+`Microsoft.FastBuild` .NET tool to build. Install the tool from a package source that contains it,
 or add it to a local tool manifest and run `dotnet tool restore`. The SDK does not download
 the tool or add package sources automatically.
 
 ```shell
 dotnet tool install --global Microsoft.FastBuild --prerelease --source <package-source>
+dotnet build --fastbuild
 dotnet test --fastbuild
 ```
 
-Both VSTest and Microsoft.Testing.Platform support the switch. The integration uses
-FastBuild's nonresident mode so the test command does not leave a build server running.
+Both VSTest and Microsoft.Testing.Platform support the test switch. The integration uses
+FastBuild's nonresident mode so neither command leaves a build server running.
 FastBuild receives the selected project or solution, configuration, target framework,
 runtime, MSBuild properties,
 and verbosity. A solution invocation builds the selected solution, including non-test
-projects. Tests run only after a successful build, without a second build or restore.
-`--no-restore` also disables FastBuild's restore; `--no-build` takes precedence and does
-not invoke FastBuild.
+projects. `dotnet build` returns FastBuild's exit code without performing another build.
+Tests run only after a successful build, without a second build or restore.
+`--no-restore` also disables FastBuild's restore; for `dotnet test`, `--no-build`
+takes precedence and does not invoke FastBuild.
 
 The switch requires a project or solution; it does not build file-based apps or test
 assemblies selected directly with `--test-modules`. Unsupported build arguments fail
 explicitly rather than being ignored. Plain `-bl` enables FastBuild's per-build binary
-logs; custom binary-log paths, custom MSBuild loggers, additional targets,
+logs; custom binary-log paths, custom MSBuild loggers, explicit MSBuild targets,
+`--no-incremental`, `--disable-build-servers`, MSBuild result queries,
 and restore-only properties are not supported by this integration. Omit `--fastbuild`
 to use the existing build path.
+
+The [shared FastBuild bridge](../../src/Cli/dotnet/Commands/FastBuildCommand.cs)
+owns argument translation, tool resolution, and SDK selection for both commands.
 
 ## SDK process entry points
 

@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.DotNet.Cli.Commands;
 using Microsoft.DotNet.Cli.Commands.Test;
 using Microsoft.DotNet.Cli.CommandLine;
 using Microsoft.DotNet.Cli.Utils;
@@ -73,7 +74,7 @@ public class FastBuildCommandTests
             "-t:_MTPBuild",
             "-bl");
 
-        string[] arguments = FastBuildCommand.CreateArguments("Tests.csproj", buildArgs, noRestore);
+        string[] arguments = FastBuildCommand.CreateArguments("Tests.csproj", buildArgs, noRestore, "_MTPBuild");
 
         arguments.Should().Equal(
             new[] { Path.GetFullPath("Tests.csproj"), "--msbuild-engine", "dotnet", "--no-server" }

@@ -62,6 +62,11 @@
         <target state="translated">Projeyi derlemek için kullanılacak yapılandırma. Çoğu proje için varsayılan, ‘Hata Ayıklama’ seçeneğidir.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
+        <note>{Locked="Microsoft.FastBuild"}</note>
+      </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
         <target state="translated">Derlemenin yapılacağı hedef çerçeve. Hedef çerçevenin proje dosyasında da belirtilmesi gerekir.</target>

@@ -262,6 +262,21 @@
         <target state="new">No tests ran.</target>
         <note />
       </trans-unit>
+      <trans-unit id="FastBuildRequiresProject">
+        <source>The option '--fastbuild' requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</source>
+        <target state="new">The option '--fastbuild' requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</target>
+        <note>{Locked="--fastbuild"}</note>
+      </trans-unit>
+      <trans-unit id="FastBuildToolNotFound">
+        <source>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</source>
+        <target state="new">The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</target>
+        <note>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</note>
+      </trans-unit>
+      <trans-unit id="FastBuildUnsupportedArgument">
+        <source>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</source>
+        <target state="new">The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</target>
+        <note>{0} is the unsupported build argument. {Locked="--fastbuild"}</note>
+      </trans-unit>
       <trans-unit id="FlakyAttempts">
         <source>{0} attempts</source>
         <target state="new">{0} attempts</target>
@@ -3386,21 +3401,6 @@ Cílem projektu je více architektur. Pomocí parametru {0} určete, která arch
         <source>Discovered {0} tests.</source>
         <target state="translated">Počet zjištěných testů: {0}</target>
         <note>0 is number of tests</note>
-      </trans-unit>
-      <trans-unit id="TestFastBuildRequiresProject">
-        <source>The option '--fastbuild' requires a project or solution to build. It cannot build test assemblies or file-based apps. Use '--no-build' to skip building.</source>
-        <target state="new">The option '--fastbuild' requires a project or solution to build. It cannot build test assemblies or file-based apps. Use '--no-build' to skip building.</target>
-        <note>{Locked="--fastbuild"} {Locked="--no-build"}</note>
-      </trans-unit>
-      <trans-unit id="TestFastBuildToolNotFound">
-        <source>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</source>
-        <target state="new">The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</target>
-        <note>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</note>
-      </trans-unit>
-      <trans-unit id="TestFastBuildUnsupportedArgument">
-        <source>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</source>
-        <target state="new">The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</target>
-        <note>{0} is the unsupported build argument. {Locked="--fastbuild"}</note>
       </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>

@@ -62,6 +62,11 @@
         <target state="translated">Configurazione da usare per compilare il progetto. L'impostazione predefinita per la maggior parte dei progetti è 'Debug'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
+        <note>{Locked="Microsoft.FastBuild"}</note>
+      </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
         <target state="translated">Framework di destinazione per cui eseguire la compilazione. Il framework di destinazione deve essere specificato anche nel file di progetto.</target>

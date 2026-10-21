@@ -62,6 +62,11 @@
         <target state="translated">Configuration à utiliser pour la génération du projet. La valeur par défaut pour la plupart des projets est 'Debug'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
+        <note>{Locked="Microsoft.FastBuild"}</note>
+      </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
         <target state="translated">Framework cible pour lequel la génération est effectuée. Le framework cible doit également être spécifié dans le fichier projet.</target>

@@ -1567,4 +1567,8 @@ If command is specified without the argument, it lists all the template packages
     <value>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</value>
     <comment>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</comment>
   </data>
+  <data name="BuildFastBuildOptionDescription" xml:space="preserve">
+    <value>Build with the separately installed Microsoft.FastBuild tool.</value>
+    <comment>{Locked="Microsoft.FastBuild"}</comment>
+  </data>
 </root>

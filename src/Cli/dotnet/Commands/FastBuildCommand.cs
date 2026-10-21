@@ -5,15 +5,54 @@ using Microsoft.DotNet.Cli.CommandFactory;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.FileBasedPrograms;
 
-namespace Microsoft.DotNet.Cli.Commands.Test;
+namespace Microsoft.DotNet.Cli.Commands;
 
-internal static class FastBuildCommand
+internal sealed class FastBuildCommand(MSBuildArgs buildArgs, bool noRestore, CommandServices services) : CommandBase(services)
 {
-    internal static string[] CreateArguments(string filePath, MSBuildArgs buildArgs, bool noRestore)
+    public override int Execute() => Run(GetArguments());
+
+    internal string[] GetArguments()
     {
-        if (VirtualProjectBuilder.IsValidEntryPointPath(filePath, requireFileToExist: false))
+        string[] paths = [.. buildArgs.OtherMSBuildArgs.Where(argument =>
+            !argument.StartsWith('-') &&
+            (!argument.StartsWith('/') || File.Exists(argument) || Directory.Exists(argument)))];
+        if (paths.Length > 1)
         {
-            throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+            throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
+        }
+
+        string filePath = paths.SingleOrDefault() ?? Directory.GetCurrentDirectory();
+        if (Directory.Exists(filePath))
+        {
+            var (found, message) = ProjectOrSolutionFileResolver.TryGetProjectOrSolutionFilePath(filePath, out filePath, out _);
+            if (!found)
+            {
+                throw new GracefulException(message);
+            }
+        }
+
+        string[] arguments = CreateArguments(
+            filePath,
+            buildArgs.CloneWithExplicitArgs([.. buildArgs.OtherMSBuildArgs.Except(paths)]),
+            noRestore);
+        if (!File.Exists(filePath))
+        {
+            throw new GracefulException(CliCommandStrings.CmdNonExistentFileErrorDescription, Path.GetFullPath(filePath));
+        }
+
+        return arguments;
+    }
+
+    internal static string[] CreateArguments(string filePath, MSBuildArgs buildArgs, bool noRestore, string? requiredTarget = null)
+    {
+        string extension = Path.GetExtension(filePath);
+        if (VirtualProjectBuilder.IsValidEntryPointPath(filePath, requireFileToExist: false) ||
+            (!extension.EndsWith("proj", StringComparison.OrdinalIgnoreCase) &&
+             !extension.Equals(".sln", StringComparison.OrdinalIgnoreCase) &&
+             !extension.Equals(".slnx", StringComparison.OrdinalIgnoreCase) &&
+             !extension.Equals(".slnf", StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
         }
 
         List<string> arguments = [Path.GetFullPath(filePath), "--msbuild-engine", "dotnet", "--no-server"];
@@ -37,10 +76,29 @@ internal static class FastBuildCommand
             throw UnsupportedArgument("--restoreProperty");
         }
 
+        if (buildArgs.GetProperty is { Length: > 0 })
+        {
+            throw UnsupportedArgument("--getProperty");
+        }
+
+        if (buildArgs.GetItem is { Length: > 0 })
+        {
+            throw UnsupportedArgument("--getItem");
+        }
+
+        if (buildArgs.GetTargetResult is { Length: > 0 })
+        {
+            throw UnsupportedArgument("--getTargetResult");
+        }
+
+        if (buildArgs.GetResultOutputFile is { Length: > 0 })
+        {
+            throw UnsupportedArgument("--getResultOutputFile");
+        }
+
         foreach (string target in buildArgs.RequestedTargets ?? [])
         {
-            if (!target.Equals("VSTest", StringComparison.OrdinalIgnoreCase) &&
-                !target.Equals(TestCommandDefinition.MicrosoftTestingPlatform.BuildTargetName, StringComparison.OrdinalIgnoreCase))
+            if (!target.Equals(requiredTarget, StringComparison.OrdinalIgnoreCase))
             {
                 throw UnsupportedArgument($"--target:{target}");
             }
@@ -74,9 +132,12 @@ internal static class FastBuildCommand
         string filePath,
         MSBuildArgs buildArgs,
         bool noRestore,
+        string? requiredTarget = null,
         IReadOnlyDictionary<string, string>? environmentVariables = null)
+        => Run(CreateArguments(filePath, buildArgs, noRestore, requiredTarget), environmentVariables);
+
+    private static int Run(string[] arguments, IReadOnlyDictionary<string, string>? environmentVariables = null)
     {
-        string[] arguments = CreateArguments(filePath, buildArgs, noRestore);
         Utils.Command command;
         try
         {
@@ -84,7 +145,7 @@ internal static class FastBuildCommand
         }
         catch (CommandUnknownException)
         {
-            throw new GracefulException(CliCommandStrings.TestFastBuildToolNotFound);
+            throw new GracefulException(CliCommandStrings.FastBuildToolNotFound);
         }
 
         foreach (var (name, value) in environmentVariables?.AsEnumerable() ?? [])
@@ -105,5 +166,5 @@ internal static class FastBuildCommand
     }
 
     private static GracefulException UnsupportedArgument(string argument)
-        => new(CliCommandStrings.TestFastBuildUnsupportedArgument, argument);
+        => new(CliCommandStrings.FastBuildUnsupportedArgument, argument);
 }

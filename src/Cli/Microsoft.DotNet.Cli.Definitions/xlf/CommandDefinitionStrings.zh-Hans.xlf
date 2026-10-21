@@ -62,6 +62,11 @@
         <target state="translated">用于生成项目的配置。大多数项目的默认值是 "Debug"。</target>
         <note />
       </trans-unit>
+      <trans-unit id="BuildFastBuildOptionDescription">
+        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
+        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
+        <note>{Locked="Microsoft.FastBuild"}</note>
+      </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
         <target state="translated">要生成的目标框架。必须在项目文件中指定目标框架。</target>

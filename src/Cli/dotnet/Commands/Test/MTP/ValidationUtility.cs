@@ -54,7 +54,7 @@ internal static class ValidationUtility
 
             if (parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption))
             {
-                throw new GracefulException(CliCommandStrings.TestFastBuildRequiresProject);
+                throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }
         }
     }

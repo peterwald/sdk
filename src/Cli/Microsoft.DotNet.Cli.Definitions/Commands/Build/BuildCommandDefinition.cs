@@ -41,6 +41,8 @@ internal sealed class BuildCommandDefinition : Command
 
     public readonly Option<bool> NoRestoreOption = CommonOptions.CreateNoRestoreOption();
 
+    public readonly Option<bool> FastBuildOption = CommonOptions.CreateFastBuildOption(CommandDefinitionStrings.BuildFastBuildOptionDescription);
+
     public readonly Option<bool> SelfContainedOption = CommonOptions.CreateSelfContainedOption();
 
     public readonly Option<bool> NoSelfContainedOption = CommonOptions.CreateNoSelfContainedOption();
@@ -78,6 +80,7 @@ internal sealed class BuildCommandDefinition : Command
         Options.Add(ConfigurationOption);
         Options.Add(VersionSuffixOption);
         Options.Add(NoRestoreOption);
+        Options.Add(FastBuildOption);
         Options.Add(InteractiveOption);
         Options.Add(VerbosityOption);
         Options.Add(OutputOption);

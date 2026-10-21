@@ -6,6 +6,7 @@ using Microsoft.DotNet.Cli.CommandLine;
 using Microsoft.DotNet.Cli.Commands.Restore;
 using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Extensions;
+using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.DotNet.Cli.Commands.Build;
 
@@ -28,26 +29,47 @@ public static class BuildCommand
             parseResult.HasOption(definition.NoSelfContainedOption));
 
         bool noRestore = parseResult.HasOption(definition.NoRestoreOption);
+        bool useFastBuild = parseResult.GetValue(definition.FastBuildOption);
 
         return DotNetCommandFactory.CreateVirtualOrPhysicalCommand(
             definition,
             definition.SlnOrProjectOrFileArgument,
-            createVirtualCommand: (msbuildArgs, appFilePath) => new VirtualProjectBuildingCommand(
-                entryPointFileFullPath: Path.GetFullPath(appFilePath),
-                msbuildArgs: msbuildArgs,
-                services: services)
+            createVirtualCommand: (msbuildArgs, appFilePath) =>
             {
-                NoRestore = noRestore,
-                NoCache = true,
+                if (useFastBuild)
+                {
+                    throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
+                }
+
+                return new VirtualProjectBuildingCommand(
+                    entryPointFileFullPath: Path.GetFullPath(appFilePath),
+                    msbuildArgs: msbuildArgs,
+                    services: services)
+                {
+                    NoRestore = noRestore,
+                    NoCache = true,
+                };
             },
-            createPhysicalCommand: (msbuildArgs, msbuildPath) => new RestoringCommand(
-                msbuildArgs: msbuildArgs.CloneWithAdditionalArgs("-consoleloggerparameters:Summary"),
-                noRestore: noRestore,
-                msbuildPath: msbuildPath,
-                userProfileDir: null,
-                advertiseWorkloadUpdates: null,
-                services: services
-            ),
+            createPhysicalCommand: (msbuildArgs, msbuildPath) =>
+            {
+                if (useFastBuild)
+                {
+                    if (msbuildPath is not null)
+                    {
+                        throw new GracefulException(CliCommandStrings.FastBuildUnsupportedArgument, msbuildPath);
+                    }
+
+                    return new FastBuildCommand(msbuildArgs, noRestore, services);
+                }
+
+                return new RestoringCommand(
+                    msbuildArgs: msbuildArgs.CloneWithAdditionalArgs("-consoleloggerparameters:Summary"),
+                    noRestore: noRestore,
+                    msbuildPath: msbuildPath,
+                    userProfileDir: null,
+                    advertiseWorkloadUpdates: null,
+                    services: services);
+            },
             optionsToUseWhenParsingMSBuildFlags:
             [
                 CommonOptions.CreatePropertyOption(),

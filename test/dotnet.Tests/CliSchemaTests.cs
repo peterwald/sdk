@@ -833,6 +833,19 @@ public class CliSchemaTests : SdkTest
       "required": false,
       "recursive": false
     },
+    "--fastbuild": {
+      "description": "Build with the separately installed Microsoft.FastBuild tool.",
+      "hidden": false,
+      "valueType": "System.Boolean",
+      "hasDefaultValue": true,
+      "defaultValue": false,
+      "arity": {
+        "minimum": 0,
+        "maximum": 0
+      },
+      "required": false,
+      "recursive": false
+    },
     "--force": {
       "description": "Force all dependencies to be resolved even if the last restore was successful.\nThis is equivalent to deleting project.assets.json.",
       "hidden": true,

@@ -7,7 +7,7 @@ using Microsoft.DotNet.Tools.Test.Utilities;
 namespace Microsoft.DotNet.Cli.Test.Tests;
 
 [TestClass]
-public class GivenDotnetTestUsesFastBuild : SdkTest
+public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
 {
     [TestMethod]
     [CombinatorialData]
@@ -146,57 +146,4 @@ public class GivenDotnetTestUsesFastBuild : SdkTest
                 identifier: Guid.NewGuid().ToString())
             .WithSource()
             .WithVersionVariables();
-
-    private string CreateFastBuildTool()
-    {
-        var project = new TestProject
-        {
-            Name = "dotnet-fastbuild",
-            IsExe = true
-        };
-        project.SourceFiles["Program.cs"] =
-            """
-            using System;
-            using System.Diagnostics;
-            using System.IO;
-
-            Console.WriteLine("FastBuild test tool invoked");
-            File.WriteAllLines(Environment.GetEnvironmentVariable("FASTBUILD_TEST_ARGUMENTS"), args);
-            if (int.TryParse(Environment.GetEnvironmentVariable("FASTBUILD_TEST_EXIT_CODE"), out int exitCode))
-            {
-                return exitCode;
-            }
-
-            var startInfo = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH"))
-            {
-                UseShellExecute = false
-            };
-            startInfo.ArgumentList.Add("build");
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i] == "--msbuild-engine")
-                {
-                    i++;
-                }
-                else if (args[i] != "--no-server")
-                {
-                    startInfo.ArgumentList.Add(args[i]);
-                }
-            }
-            using var process = Process.Start(startInfo);
-            process.WaitForExit();
-            if (process.ExitCode == 0)
-            {
-                File.WriteAllText(
-                    Environment.GetEnvironmentVariable("FASTBUILD_TEST_MARKER"),
-                    Environment.GetEnvironmentVariable("FastBuildUserEnvironment") ?? "built");
-            }
-            return process.ExitCode;
-            """;
-
-        TestAsset asset = TestAssetsManager.CreateTestProject(project, identifier: Guid.NewGuid().ToString());
-        var build = new BuildCommand(asset);
-        build.Execute().Should().Pass();
-        return build.GetOutputDirectory(project.TargetFrameworks).FullName;
-    }
 }

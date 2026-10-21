@@ -274,6 +274,13 @@ internal static class CommonOptions
         }
         .ForwardIfEnabled(["--property:UseRazorBuildServer=false", "--property:UseSharedCompilation=false", "/nodeReuse:false"]);
 
+    public static Option<bool> CreateFastBuildOption(string description) =>
+        new("--fastbuild")
+        {
+            Description = description,
+            Arity = ArgumentArity.Zero
+        };
+
     public static Option<bool> DebugOption = new("--debug")
     {
         Arity = ArgumentArity.Zero,
