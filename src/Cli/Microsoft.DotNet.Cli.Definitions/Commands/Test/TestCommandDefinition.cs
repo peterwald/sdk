@@ -24,23 +24,23 @@ internal abstract partial class TestCommandDefinition : Command
 
     public readonly Option<Utils.VerbosityOptions?> VerbosityOption = CommonOptions.CreateVerbosityOption();
 
-    public readonly Option<bool> FastBuildOption = CommonOptions.CreateFastBuildOption(CommandDefinitionStrings.TestFastBuildOptionDescription);
+    public bool UseFastBuild { get; }
 
-    public TestCommandDefinition(string description)
-        : base("test", description)
+    public TestCommandDefinition(string description, bool useFastBuild)
+        : base(useFastBuild ? "testx" : "test", useFastBuild ? CommandDefinitionStrings.TestXCommandDescription : description)
     {
         this.DocsLink = Link;
         TreatUnmatchedTokensAsErrors = false;
-        Options.Add(FastBuildOption);
+        UseFastBuild = useFastBuild;
     }
 
-    public static TestCommandDefinition Create()
-        => Create(Environment.CurrentDirectory, Environment.GetEnvironmentVariable(TestRunnerEnvironmentVariableName));
+    public static TestCommandDefinition Create(bool useFastBuild = false)
+        => Create(Environment.CurrentDirectory, Environment.GetEnvironmentVariable(TestRunnerEnvironmentVariableName), useFastBuild);
 
     internal static TestCommandDefinition Create(string startDirectory)
         => Create(startDirectory, Environment.GetEnvironmentVariable(TestRunnerEnvironmentVariableName));
 
-    internal static TestCommandDefinition Create(string startDirectory, string? testRunnerEnvironmentValue)
+    internal static TestCommandDefinition Create(string startDirectory, string? testRunnerEnvironmentValue, bool useFastBuild = false)
     {
         // The DOTNET_TEST_RUNNER environment variable lets users pick a runner without editing
         // (or carrying multiple) global.json files. When set to a recognized value it takes
@@ -52,7 +52,7 @@ internal abstract partial class TestCommandDefinition : Command
         // back to the global.json lookup; an unknown value in global.json itself remains a
         // hard error because that file is explicit, in-repo configuration the user can fix.
         string? trimmedEnvValue = testRunnerEnvironmentValue?.Trim();
-        if (!string.IsNullOrEmpty(trimmedEnvValue) && TryResolveRunner(trimmedEnvValue) is { } runnerFromEnv)
+        if (!string.IsNullOrEmpty(trimmedEnvValue) && TryResolveRunner(trimmedEnvValue, useFastBuild) is { } runnerFromEnv)
         {
             return runnerFromEnv;
         }
@@ -60,23 +60,23 @@ internal abstract partial class TestCommandDefinition : Command
         string? globalJsonRunnerName = TryGetRunnerNameFromGlobalJson(startDirectory);
         if (globalJsonRunnerName is null)
         {
-            return new VSTest();
+            return new VSTest(useFastBuild);
         }
 
-        return TryResolveRunner(globalJsonRunnerName)
+        return TryResolveRunner(globalJsonRunnerName, useFastBuild)
             ?? throw new InvalidOperationException(string.Format(CommandDefinitionStrings.CmdUnsupportedTestRunnerDescription, globalJsonRunnerName));
     }
 
-    private static TestCommandDefinition? TryResolveRunner(string name)
+    private static TestCommandDefinition? TryResolveRunner(string name, bool useFastBuild)
     {
         if (name.Equals(VSTestRunnerName, StringComparison.OrdinalIgnoreCase))
         {
-            return new VSTest();
+            return new VSTest(useFastBuild);
         }
 
         if (name.Equals(MicrosoftTestingPlatformRunnerName, StringComparison.OrdinalIgnoreCase))
         {
-            return new MicrosoftTestingPlatform();
+            return new MicrosoftTestingPlatform(useFastBuild);
         }
 
         return null;

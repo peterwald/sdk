@@ -209,8 +209,8 @@ internal abstract partial class TestCommandDefinition
 
         public ICustomHelp? CustomHelpLayoutProvider { get; set; }
 
-        public MicrosoftTestingPlatform()
-            : base(CommandDefinitionStrings.DotnetTestCommandMTPDescription)
+        public MicrosoftTestingPlatform(bool useFastBuild = false)
+            : base(CommandDefinitionStrings.DotnetTestCommandMTPDescription, useFastBuild)
         {
             MinimumExpectedTestsOption.Validators.Add(ValidatePositiveInteger);
             MaximumFailedTestsOption.Validators.Add(ValidatePositiveInteger);

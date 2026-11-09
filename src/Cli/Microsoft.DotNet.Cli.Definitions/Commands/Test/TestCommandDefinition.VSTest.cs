@@ -160,8 +160,8 @@ internal abstract partial class TestCommandDefinition
             return result;
         }
 
-        public VSTest()
-            : base(CommandDefinitionStrings.DotnetTestCommandVSTestDescription)
+        public VSTest(bool useFastBuild = false)
+            : base(CommandDefinitionStrings.DotnetTestCommandVSTestDescription, useFastBuild)
         {
             // We are on purpose not capturing the solution, project or directory here. We want to pass it to the
             // MSBuild command so we are letting it flow.

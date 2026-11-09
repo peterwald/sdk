@@ -56,6 +56,7 @@ sdk-options:
   solution          {CliCommandStrings.SlnDefinition}
   store             {CliCommandStrings.StoreDefinition}
   test              {CliCommandStrings.TestDefinition}
+  testx             {CommandDefinitionStrings.TestXCommandDescription}
   tool              {CliCommandStrings.ToolDefinition}
   vstest            {CliCommandStrings.VsTestDefinition}
   workload          {CliCommandStrings.WorkloadDefinition}

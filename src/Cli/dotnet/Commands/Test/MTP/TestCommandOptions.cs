@@ -141,7 +141,7 @@ internal static class TestCommandOptions
             ListDevices: parseResult.GetValue(definition.ListDevicesOption),
             EnvironmentVariables: parseResult.GetValue(definition.EnvOption) ?? ImmutableDictionary<string, string>.Empty)
         {
-            UseFastBuild = parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption)
+            UseFastBuild = definition.UseFastBuild && !parseResult.GetValue(definition.NoBuildOption)
         };
     }
 

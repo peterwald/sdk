@@ -63,9 +63,9 @@
         <note />
       </trans-unit>
       <trans-unit id="BuildFastBuildOptionDescription">
-        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
-        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
-        <note>{Locked="Microsoft.FastBuild"}</note>
+        <source>Build with the separately installed Microsoft.DotNet.BuildX tool.</source>
+        <target state="new">Build with the separately installed Microsoft.DotNet.BuildX tool.</target>
+        <note>{Locked="Microsoft.DotNet.BuildX"}</note>
       </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
@@ -2011,11 +2011,6 @@ Varsayılan değer 'false.' Ancak çalışma zamanı tanımlayıcısı belirtild
         <target state="translated">Testleri çalıştırmak için kullanılacak yapılandırma. Çoğu proje için varsayılan, ‘Hata Ayıklama’ seçeneğidir.</target>
         <note />
       </trans-unit>
-      <trans-unit id="TestFastBuildOptionDescription">
-        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
-        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
-        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
-      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">Testlerin çalıştırılacağı hedef çerçeve. Hedef çerçevenin proje dosyasında da belirtilmesi gerekir.</target>
@@ -2025,6 +2020,11 @@ Varsayılan değer 'false.' Ancak çalışma zamanı tanımlayıcısı belirtild
         <source>The target runtime to test for.</source>
         <target state="translated">Test için hedef çalışma zamanı.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="TestXCommandDescription">
+        <source>Run tests using Microsoft.DotNet.BuildX to build. Use --no-build to skip building.</source>
+        <target state="new">Run tests using Microsoft.DotNet.BuildX to build. Use --no-build to skip building.</target>
+        <note>{Locked="Microsoft.DotNet.BuildX"} {Locked="--no-build"}</note>
       </trans-unit>
       <trans-unit id="ToolCommandDescription">
         <source>Install or work with tools that extend the .NET experience.</source>

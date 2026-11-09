@@ -9,7 +9,7 @@ public abstract class FastBuildTestBase : SdkTest
     {
         var project = new TestProject
         {
-            Name = "dotnet-fastbuild",
+            Name = "dotnet-buildx",
             IsExe = true
         };
         project.SourceFiles["Program.cs"] =

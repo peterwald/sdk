@@ -57,38 +57,42 @@ Run the following command from the root of the repository:
 
 The build script will output a .NET Core installation to `artifacts\bin\redist\Debug\dotnet` that will include any local changes to the .NET Core CLI.
 
-### Opt-in FastBuild for `dotnet build` and `dotnet test`
+### Experimental BuildX integration with `dotnet testx`
 
-`dotnet build --fastbuild` and `dotnet test --fastbuild` use a separately installed
-`Microsoft.FastBuild` .NET tool to build. Install the tool from a package source that contains it,
+`dotnet testx` and `dotnet build --fastbuild` use a separately installed
+`Microsoft.DotNet.BuildX` .NET tool to build. The current preview is `11.11.34-preview`,
+published to the internal `dotnet-core-internal-tooling` Azure Artifacts feed.
+Install the tool from that feed,
 or add it to a local tool manifest and run `dotnet tool restore`. The SDK does not download
 the tool or add package sources automatically.
 
 ```shell
-dotnet tool install --global Microsoft.FastBuild --prerelease --source <package-source>
+dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json
 dotnet build --fastbuild
-dotnet test --fastbuild
+dotnet testx
 ```
 
-Both VSTest and Microsoft.Testing.Platform support the test switch. The integration uses
-FastBuild's nonresident mode so neither command leaves a build server running.
-FastBuild receives the selected project or solution, configuration, target framework,
+`dotnet test` retains its existing behavior and does not invoke BuildX. `dotnet testx`
+selects VSTest or Microsoft.Testing.Platform using the same configuration as `dotnet test`,
+and always uses BuildX unless `--no-build` is specified; no `--fastbuild` switch is needed.
+The integration uses BuildX's nonresident mode so neither command leaves a build server running.
+BuildX receives the selected project or solution, configuration, target framework,
 runtime, MSBuild properties,
 and verbosity. A solution invocation builds the selected solution, including non-test
-projects. `dotnet build` returns FastBuild's exit code without performing another build.
+projects. `dotnet build --fastbuild` returns BuildX's exit code without performing another build.
 Tests run only after a successful build, without a second build or restore.
-`--no-restore` also disables FastBuild's restore; for `dotnet test`, `--no-build`
-takes precedence and does not invoke FastBuild.
+`--no-restore` also disables BuildX's restore; for `dotnet testx`, `--no-build`
+takes precedence and does not invoke BuildX.
 
-The switch requires a project or solution; it does not build file-based apps or test
+The BuildX integration requires a project or solution; it does not build file-based apps or test
 assemblies selected directly with `--test-modules`. Unsupported build arguments fail
-explicitly rather than being ignored. Plain `-bl` enables FastBuild's per-build binary
+explicitly rather than being ignored. Plain `-bl` enables BuildX's per-build binary
 logs; custom binary-log paths, custom MSBuild loggers, explicit MSBuild targets,
 `--no-incremental`, `--disable-build-servers`, MSBuild result queries,
-and restore-only properties are not supported by this integration. Omit `--fastbuild`
-to use the existing build path.
+and restore-only properties are not supported by this integration. Use `dotnet test`
+instead of `dotnet testx`, or omit `--fastbuild` from `dotnet build`, to use the existing build path.
 
-The [shared FastBuild bridge](../../src/Cli/dotnet/Commands/FastBuildCommand.cs)
+The [shared BuildX bridge](../../src/Cli/dotnet/Commands/FastBuildCommand.cs)
 owns argument translation, tool resolution, and SDK selection for both commands.
 
 ## SDK process entry points

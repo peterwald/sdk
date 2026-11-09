@@ -52,7 +52,7 @@ internal static class ValidationUtility
                 throw new GracefulException(CliCommandStrings.CmdOptionCannotBeUsedWithTestModulesDescription);
             }
 
-            if (parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption))
+            if (definition.UseFastBuild && !parseResult.GetValue(definition.NoBuildOption))
             {
                 throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }

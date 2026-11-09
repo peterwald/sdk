@@ -120,6 +120,7 @@ internal sealed class DotNetCommandDefinition : RootCommand
     public readonly InternalReportInstallSuccessCommandDefinition InternalReportInstallSuccessCommand;
     public readonly WorkloadCommandDefinition WorkloadCommand;
     public readonly TestCommandDefinition TestCommand;
+    public readonly TestCommandDefinition TestXCommand;
     public readonly CompletionsCommandDefinition CompletionsCommand;
 
     public DotNetCommandDefinition()
@@ -165,6 +166,7 @@ internal sealed class DotNetCommandDefinition : RootCommand
         Subcommands.Add(SolutionCommand = new());
         Subcommands.Add(StoreCommand = new());
         Subcommands.Add(TestCommand = TestCommandDefinition.Create());
+        Subcommands.Add(TestXCommand = TestCommandDefinition.Create(useFastBuild: true));
         Subcommands.Add(ToolCommand = new());
         Subcommands.Add(VSTestCommand = new());
         Subcommands.Add(HelpCommand = new());

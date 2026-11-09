@@ -63,9 +63,9 @@
         <note />
       </trans-unit>
       <trans-unit id="BuildFastBuildOptionDescription">
-        <source>Build with the separately installed Microsoft.FastBuild tool.</source>
-        <target state="new">Build with the separately installed Microsoft.FastBuild tool.</target>
-        <note>{Locked="Microsoft.FastBuild"}</note>
+        <source>Build with the separately installed Microsoft.DotNet.BuildX tool.</source>
+        <target state="new">Build with the separately installed Microsoft.DotNet.BuildX tool.</target>
+        <note>{Locked="Microsoft.DotNet.BuildX"}</note>
       </trans-unit>
       <trans-unit id="BuildFrameworkOptionDescription">
         <source>The target framework to build for. The target framework must also be specified in the project file.</source>
@@ -2011,11 +2011,6 @@ The default is 'false.' However, when targeting .NET 7 or lower, the default is 
         <target state="translated">テストの実行に使用する構成。ほとんどのプロジェクトで、既定値は 'Debug' です。</target>
         <note />
       </trans-unit>
-      <trans-unit id="TestFastBuildOptionDescription">
-        <source>Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</source>
-        <target state="new">Build with the separately installed Microsoft.FastBuild tool before testing. Ignored with --no-build.</target>
-        <note>{Locked="Microsoft.FastBuild"} {Locked="--no-build"}</note>
-      </trans-unit>
       <trans-unit id="TestFrameworkOptionDescription">
         <source>The target framework to run tests for. The target framework must also be specified in the project file.</source>
         <target state="translated">テストを実行する対象のターゲット フレームワーク。ターゲット フレームワークはプロジェクト ファイルでも指定する必要があります。</target>
@@ -2025,6 +2020,11 @@ The default is 'false.' However, when targeting .NET 7 or lower, the default is 
         <source>The target runtime to test for.</source>
         <target state="translated">テスト対象のターゲット ランタイム。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="TestXCommandDescription">
+        <source>Run tests using Microsoft.DotNet.BuildX to build. Use --no-build to skip building.</source>
+        <target state="new">Run tests using Microsoft.DotNet.BuildX to build. Use --no-build to skip building.</target>
+        <note>{Locked="Microsoft.DotNet.BuildX"} {Locked="--no-build"}</note>
       </trans-unit>
       <trans-unit id="ToolCommandDescription">
         <source>Install or work with tools that extend the .NET experience.</source>

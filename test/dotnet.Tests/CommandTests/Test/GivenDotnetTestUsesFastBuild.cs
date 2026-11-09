@@ -37,15 +37,16 @@ public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
                 .Should().Pass();
         }
 
-        var command = new DotnetTestCommand(Log, disableNewOutput: false)
+        var command = new DotnetCommand(Log, "testx")
             .WithWorkingDirectory(asset.Path)
+            .WithEnvironmentVariable("MSBuildEnableWorkloadResolver", "false")
             .WithEnvironmentVariable("DOTNET_TEST_RUNNER", useMtp ? "Microsoft.Testing.Platform" : "VSTest")
             .WithEnvironmentVariable("PATH", toolDirectory + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH"))
             .WithEnvironmentVariable("FASTBUILD_TEST_ARGUMENTS", argumentsFile)
             .WithEnvironmentVariable("FASTBUILD_TEST_MARKER", markerFile);
 
         var result = command.Execute([
-            "--fastbuild", "-c", "Release", "-p:FastBuildCustomProperty=hello world",
+            "-c", "Release", "-p:FastBuildCustomProperty=hello world",
             "-e", "FastBuildUserEnvironment=user-value",
             .. noRestore ? new[] { "--no-restore" } : Array.Empty<string>()
         ]);
@@ -64,7 +65,7 @@ public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
         result.StdOut.Should().Contain(useMtp ? "Test run summary:" : "VSTestFailTest");
 
         File.Delete(argumentsFile);
-        var noBuildResult = command.Execute("--fastbuild", "--no-build", "-c", "Release");
+        var noBuildResult = command.Execute("--no-build", "-c", "Release");
         noBuildResult.ExitCode.Should().Be(useMtp ? 2 : 1);
         File.Exists(argumentsFile).Should().BeFalse();
         noBuildResult.StdOut.Should().NotContain("FastBuild test tool invoked");
@@ -79,13 +80,14 @@ public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
         string toolDirectory = CreateFastBuildTool();
         string argumentsFile = Path.Combine(asset.Path, "fastbuild-arguments.txt");
 
-        var result = new DotnetTestCommand(Log, disableNewOutput: false)
+        var result = new DotnetCommand(Log, "testx")
             .WithWorkingDirectory(asset.Path)
+            .WithEnvironmentVariable("MSBuildEnableWorkloadResolver", "false")
             .WithEnvironmentVariable("DOTNET_TEST_RUNNER", useMtp ? "Microsoft.Testing.Platform" : "VSTest")
             .WithEnvironmentVariable("PATH", toolDirectory + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH"))
             .WithEnvironmentVariable("FASTBUILD_TEST_ARGUMENTS", argumentsFile)
             .WithEnvironmentVariable("FASTBUILD_TEST_EXIT_CODE", "42")
-            .Execute("--fastbuild");
+            .Execute();
 
         result.ExitCode.Should().Be(useMtp ? 1 : 42);
         result.StdOut.Should().Contain("FastBuild test tool invoked");
@@ -101,19 +103,20 @@ public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
     {
         TestAsset asset = CreateTestAsset(useMtp);
 
-        var result = new DotnetTestCommand(Log, disableNewOutput: false)
+        var result = new DotnetCommand(Log, "testx")
             .WithWorkingDirectory(asset.Path)
+            .WithEnvironmentVariable("MSBuildEnableWorkloadResolver", "false")
             .WithEnvironmentVariable("DOTNET_TEST_RUNNER", useMtp ? "Microsoft.Testing.Platform" : "VSTest")
             .WithEnvironmentVariable("PATH", string.Empty)
             .WithEnvironmentVariable("DOTNET_CLI_HOME", Path.Combine(asset.Path, "isolated-home"))
             .WithEnvironmentVariable("DOTNET_ADD_GLOBAL_TOOLS_TO_PATH", "0")
             .WithEnvironmentVariable("DOTNET_GENERATE_ASPNET_CERTIFICATE", "false")
-            .Execute("--fastbuild");
+            .Execute();
 
         result.Should().Fail();
         if (!SdkTestContext.IsLocalized())
         {
-            result.StdErr.Should().Contain("dotnet tool install --global Microsoft.FastBuild");
+            result.StdErr.Should().Contain("dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview");
         }
     }
 
@@ -126,17 +129,54 @@ public class GivenDotnetTestUsesFastBuild : FastBuildTestBase
         string assembly = Path.Combine(directory.Path, "Tests.dll");
         File.WriteAllText(assembly, string.Empty);
 
-        var result = new DotnetTestCommand(Log, disableNewOutput: false)
+        var result = new DotnetCommand(Log, "testx")
             .WithWorkingDirectory(directory.Path)
             .WithEnvironmentVariable("DOTNET_TEST_RUNNER", useMtp ? "Microsoft.Testing.Platform" : "VSTest")
             .Execute(useMtp
-                ? ["--test-modules", assembly, "--fastbuild"]
-                : [assembly, "--fastbuild"]);
+                ? ["--test-modules", assembly]
+                : [assembly]);
 
         result.Should().Fail();
         if (!SdkTestContext.IsLocalized())
         {
             result.StdErr.Should().Contain("requires a project or solution");
+        }
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public void StandardTestDoesNotInvokeBuildX(bool useMtp)
+    {
+        TestAsset asset = CreateTestAsset(useMtp);
+        string toolDirectory = CreateFastBuildTool();
+        string argumentsFile = Path.Combine(asset.Path, "fastbuild-arguments.txt");
+
+        var result = new DotnetTestCommand(Log, disableNewOutput: false)
+            .WithWorkingDirectory(asset.Path)
+            .WithEnvironmentVariable("DOTNET_TEST_RUNNER", useMtp ? "Microsoft.Testing.Platform" : "VSTest")
+            .WithEnvironmentVariable("PATH", toolDirectory + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH"))
+            .WithEnvironmentVariable("FASTBUILD_TEST_ARGUMENTS", argumentsFile)
+            .Execute();
+
+        result.ExitCode.Should().Be(useMtp ? 2 : 1);
+        result.StdOut.Should().Contain(useMtp ? "Test run summary:" : "VSTestFailTest");
+        result.StdOut.Should().NotContain("FastBuild test tool invoked");
+        File.Exists(argumentsFile).Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void HelpDocumentsTestXWithoutAFastBuildSwitch()
+    {
+        var result = new DotnetCommand(Log, "testx", "--help")
+            .WithEnvironmentVariable("DOTNET_TEST_RUNNER", "VSTest")
+            .Execute();
+
+        result.Should().Pass();
+        result.StdOut.Should().Contain("testx").And.NotContain("--fastbuild");
+        if (!SdkTestContext.IsLocalized())
+        {
+            result.StdOut.Should().Contain("Microsoft.DotNet.BuildX");
         }
     }
 

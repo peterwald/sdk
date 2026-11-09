@@ -141,6 +141,7 @@ public static class Parser
                     DotnetHelpBuilder.Instance.Value,
                     rootCommand.NewCommand,
                     rootCommand.TestCommand,
+                    rootCommand.TestXCommand,
                     rootCommand.PackageCommand);
 #else
                 helpOption.Action = new PrintHelpAction(helpOption, DotnetHelpBuilder.Instance.Value);
@@ -190,6 +191,7 @@ public static class Parser
         SolutionCommandParser.ConfigureCommand(rootCommand.SolutionCommand);
         StoreCommandParser.ConfigureCommand(rootCommand.StoreCommand);
         TestCommandParser.ConfigureCommand(rootCommand.TestCommand);
+        TestCommandParser.ConfigureCommand(rootCommand.TestXCommand);
         ToolCommandParser.ConfigureCommand(rootCommand.ToolCommand);
         VSTestCommandParser.ConfigureCommand(rootCommand.VSTestCommand);
         HelpCommandParser.ConfigureCommand(rootCommand.HelpCommand);

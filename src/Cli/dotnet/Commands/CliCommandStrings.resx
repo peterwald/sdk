@@ -2984,15 +2984,15 @@ Proceed?</value>
     <value>Forwarded response files must select the same affected-test operation for every test application. Specify '--collect-test-map' or '--affected-tests' directly on 'dotnet test' instead.</value>
   </data>
   <data name="FastBuildRequiresProject" xml:space="preserve">
-    <value>The option '--fastbuild' requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</value>
-    <comment>{Locked="--fastbuild"}</comment>
+    <value>Building with BuildX requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</value>
+    <comment>{Locked="BuildX"}</comment>
   </data>
   <data name="FastBuildToolNotFound" xml:space="preserve">
-    <value>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</value>
-    <comment>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</comment>
+    <value>Building with BuildX requires the Microsoft.DotNet.BuildX tool. Install it with 'dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json', or restore a local tool manifest containing Microsoft.DotNet.BuildX.</value>
+    <comment>{Locked="BuildX"} {Locked="Microsoft.DotNet.BuildX"} {Locked="dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json"}</comment>
   </data>
   <data name="FastBuildUnsupportedArgument" xml:space="preserve">
-    <value>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</value>
-    <comment>{0} is the unsupported build argument. {Locked="--fastbuild"}</comment>
+    <value>The build argument '{0}' is not supported with BuildX. Remove the argument or use 'dotnet test' instead of 'dotnet testx', or omit '--fastbuild' from 'dotnet build'.</value>
+    <comment>{0} is the unsupported build argument. {Locked="BuildX"} {Locked="dotnet test"} {Locked="dotnet testx"} {Locked="--fastbuild"} {Locked="dotnet build"}</comment>
   </data>
 </root>

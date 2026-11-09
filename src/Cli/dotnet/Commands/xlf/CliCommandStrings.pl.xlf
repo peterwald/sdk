@@ -1543,19 +1543,19 @@ See https://aka.ms/dotnet-test/mtp for more information.</target>
         <note />
       </trans-unit>
       <trans-unit id="FastBuildRequiresProject">
-        <source>The option '--fastbuild' requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</source>
-        <target state="new">The option '--fastbuild' requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</target>
-        <note>{Locked="--fastbuild"}</note>
+        <source>Building with BuildX requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</source>
+        <target state="new">Building with BuildX requires a project or solution to build. Specify a single project or solution; test assemblies and file-based apps are not supported.</target>
+        <note>{Locked="BuildX"}</note>
       </trans-unit>
       <trans-unit id="FastBuildToolNotFound">
-        <source>The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</source>
-        <target state="new">The option '--fastbuild' requires the Microsoft.FastBuild tool. Install it with 'dotnet tool install --global Microsoft.FastBuild' using a package source that contains it, or restore a local tool manifest containing Microsoft.FastBuild.</target>
-        <note>{Locked="--fastbuild"} {Locked="Microsoft.FastBuild"} {Locked="dotnet tool install --global Microsoft.FastBuild"}</note>
+        <source>Building with BuildX requires the Microsoft.DotNet.BuildX tool. Install it with 'dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json', or restore a local tool manifest containing Microsoft.DotNet.BuildX.</source>
+        <target state="new">Building with BuildX requires the Microsoft.DotNet.BuildX tool. Install it with 'dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json', or restore a local tool manifest containing Microsoft.DotNet.BuildX.</target>
+        <note>{Locked="BuildX"} {Locked="Microsoft.DotNet.BuildX"} {Locked="dotnet tool install --global Microsoft.DotNet.BuildX --version 11.11.34-preview --add-source https://devdiv.pkgs.visualstudio.com/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json"}</note>
       </trans-unit>
       <trans-unit id="FastBuildUnsupportedArgument">
-        <source>The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</source>
-        <target state="new">The build argument '{0}' is not supported with '--fastbuild'. Remove the argument or use the standard build by omitting '--fastbuild'.</target>
-        <note>{0} is the unsupported build argument. {Locked="--fastbuild"}</note>
+        <source>The build argument '{0}' is not supported with BuildX. Remove the argument or use 'dotnet test' instead of 'dotnet testx', or omit '--fastbuild' from 'dotnet build'.</source>
+        <target state="new">The build argument '{0}' is not supported with BuildX. Remove the argument or use 'dotnet test' instead of 'dotnet testx', or omit '--fastbuild' from 'dotnet build'.</target>
+        <note>{0} is the unsupported build argument. {Locked="BuildX"} {Locked="dotnet test"} {Locked="dotnet testx"} {Locked="--fastbuild"} {Locked="dotnet build"}</note>
       </trans-unit>
       <trans-unit id="FlakyAttempts">
         <source>{0} attempts</source>

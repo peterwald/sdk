@@ -141,7 +141,7 @@ internal sealed class FastBuildCommand(MSBuildArgs buildArgs, bool noRestore, Co
         Utils.Command command;
         try
         {
-            command = CommandFactoryUsingResolver.Create("dotnet-fastbuild", arguments);
+            command = CommandFactoryUsingResolver.Create("dotnet-buildx", arguments);
         }
         catch (CommandUnknownException)
         {
@@ -153,13 +153,13 @@ internal sealed class FastBuildCommand(MSBuildArgs buildArgs, bool noRestore, Co
             command.EnvironmentVariable(name, value);
         }
 
-        // FastBuild also invokes dotnet through PATH for cold builds and restore.
+        // BuildX also invokes dotnet through PATH for cold builds and restore.
         string muxerPath = new Muxer().MuxerPath;
         string? path = environmentVariables is not null && environmentVariables.TryGetValue("PATH", out string? explicitPath)
             ? explicitPath
             : Environment.GetEnvironmentVariable("PATH");
         return command
-            .EnvironmentVariable("FASTBUILD_SDK_PATH", SdkPaths.SdkDirectory)
+            .EnvironmentVariable("BUILDX_SDK_PATH", SdkPaths.SdkDirectory)
             .EnvironmentVariable("DOTNET_HOST_PATH", muxerPath)
             .EnvironmentVariable("PATH", Path.GetDirectoryName(muxerPath) + Path.PathSeparator + path)
             .Execute().ExitCode;

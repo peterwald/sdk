@@ -57,7 +57,6 @@ public class VSTestArgumentConverter
             "-o",
             "--output",
             "--no-build",
-            "--fastbuild",
             "--no-restore",
             "--interactive",
             "--testSessionCorrelationId",
@@ -78,7 +77,6 @@ public class VSTestArgumentConverter
 
             // Ignored arguments
             "--no-build",
-            "--fastbuild",
             "--no-restore",
             "--interactive",
             "--artifactsProcessingMode-collect"

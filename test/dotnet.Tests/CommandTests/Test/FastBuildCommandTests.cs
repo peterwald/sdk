@@ -15,19 +15,52 @@ public class FastBuildCommandTests
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
-    public void BothRunnersRecognizeFastBuildWithoutForwardingIt(bool useMtp)
+    public void BothRunnersUseBuildXOnlyForTestX(bool useMtp)
     {
         TestCommandDefinition definition = useMtp
             ? new TestCommandDefinition.MicrosoftTestingPlatform()
             : new TestCommandDefinition.VSTest();
+        TestCommandDefinition testXDefinition = useMtp
+            ? new TestCommandDefinition.MicrosoftTestingPlatform(useFastBuild: true)
+            : new TestCommandDefinition.VSTest(useFastBuild: true);
 
-        definition.Parse([]).GetValue(definition.FastBuildOption).Should().BeFalse();
-        var result = definition.Parse(["--fastbuild"]);
+        definition.Name.Should().Be("test");
+        definition.UseFastBuild.Should().BeFalse();
+        testXDefinition.Name.Should().Be("testx");
+        testXDefinition.UseFastBuild.Should().BeTrue();
+        definition.Options.Should().NotContain(option => option.Name == "--fastbuild");
+        testXDefinition.Options.Should().NotContain(option => option.Name == "--fastbuild");
 
+        var result = testXDefinition.Parse([]);
         result.Errors.Should().BeEmpty();
         result.UnmatchedTokens.Should().BeEmpty();
-        result.GetValue(definition.FastBuildOption).Should().BeTrue();
-        result.OptionValuesToBeForwarded(definition).Should().NotContain("--fastbuild");
+        result.OptionValuesToBeForwarded(testXDefinition).Should().NotContain("--fastbuild");
+    }
+
+    [TestMethod]
+    [DataRow("VSTest", false)]
+    [DataRow("VSTest", true)]
+    [DataRow("Microsoft.Testing.Platform", false)]
+    [DataRow("Microsoft.Testing.Platform", true)]
+    public void CommandFactoryPreservesRunnerSelection(string runner, bool useFastBuild)
+    {
+        var definition = TestCommandDefinition.Create(Environment.CurrentDirectory, runner, useFastBuild);
+
+        definition.UseFastBuild.Should().Be(useFastBuild);
+        definition.Name.Should().Be(useFastBuild ? "testx" : "test");
+        (definition is TestCommandDefinition.MicrosoftTestingPlatform)
+            .Should().Be(runner == "Microsoft.Testing.Platform");
+    }
+
+    [TestMethod]
+    public void TestXIsRegisteredSeparatelyFromTest()
+    {
+        var root = new DotNetCommandDefinition();
+
+        root.Parse(["test"]).CommandResult.Command.Should().BeSameAs(root.TestCommand);
+        root.Parse(["testx"]).CommandResult.Command.Should().BeSameAs(root.TestXCommand);
+        root.TestCommand.UseFastBuild.Should().BeFalse();
+        root.TestXCommand.UseFastBuild.Should().BeTrue();
     }
 
     [TestMethod]
@@ -35,16 +68,17 @@ public class FastBuildCommandTests
     [DataRow(true)]
     public void NoBuildTakesPrecedenceOverFastBuild(bool noBuild)
     {
-        var definition = new TestCommandDefinition.MicrosoftTestingPlatform();
-        var result = definition.Parse(noBuild ? ["--fastbuild", "--no-build"] : ["--fastbuild"]);
+        var definition = new TestCommandDefinition.MicrosoftTestingPlatform(useFastBuild: true);
+        var result = definition.Parse(noBuild ? ["--no-build"] : []);
         var options = TestCommandOptions.GetBuildOptions(result);
 
         options.UseFastBuild.Should().Be(!noBuild);
         options.TestApplicationArguments.Should().NotContain("--fastbuild");
         options.MSBuildArgs.Should().NotContain("--fastbuild");
 
-        string[] arguments = noBuild ? ["--fastbuild", "--no-build"] : ["--fastbuild"];
-        var command = TestCommand.FromArgs(arguments);
+        var vsDefinition = new TestCommandDefinition.VSTest(useFastBuild: true);
+        var command = TestCommand.FromParseResult(
+            vsDefinition.Parse(noBuild ? ["--no-build"] : []), [], "test-session", []);
         command.GetArgumentsToMSBuild().Should().Contain("-property:VSTestNoBuild=true");
         command.GetArgumentsToMSBuild().Should().NotContain("-restore");
         command.SeparateRestoreCommand.Should().BeNull();
@@ -57,6 +91,8 @@ public class FastBuildCommandTests
 
         command.GetArgumentsToMSBuild().Should().NotContain("VSTestNoBuild");
         command.GetArgumentsToMSBuild().Should().Contain("-restore");
+        var definition = new TestCommandDefinition.MicrosoftTestingPlatform();
+        TestCommandOptions.GetBuildOptions(definition.Parse([])).UseFastBuild.Should().BeFalse();
     }
 
     [TestMethod]
@@ -124,10 +160,10 @@ public class FastBuildCommandTests
     [DataRow(true)]
     public void TestModulesRequireNoBuildToIgnoreFastBuild(bool noBuild)
     {
-        var definition = new TestCommandDefinition.MicrosoftTestingPlatform();
+        var definition = new TestCommandDefinition.MicrosoftTestingPlatform(useFastBuild: true);
         var result = definition.Parse(noBuild
-            ? ["--test-modules", "*.dll", "--fastbuild", "--no-build"]
-            : ["--test-modules", "*.dll", "--fastbuild"]);
+            ? ["--test-modules", "*.dll", "--no-build"]
+            : ["--test-modules", "*.dll"]);
         var options = TestCommandOptions.GetBuildOptions(result);
         Action action = () => ValidationUtility.ValidateMutuallyExclusiveOptions(result, options.PathOptions);
 

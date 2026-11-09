@@ -109,7 +109,7 @@ public class GivenDotnetBuildUsesFastBuild : FastBuildTestBase
         result.Should().Fail();
         if (!SdkTestContext.IsLocalized())
         {
-            result.StdErr.Should().Contain("dotnet tool install --global Microsoft.FastBuild");
+            result.StdErr.Should().Contain("dotnet tool install --global Microsoft.DotNet.BuildX");
         }
     }
 

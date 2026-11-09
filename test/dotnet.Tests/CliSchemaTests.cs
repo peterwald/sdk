@@ -847,7 +847,7 @@ public class CliSchemaTests : SdkTest
       "recursive": false
     },
     "--fastbuild": {
-      "description": "Build with the separately installed Microsoft.FastBuild tool.",
+      "description": "Build with the separately installed Microsoft.DotNet.BuildX tool.",
       "hidden": false,
       "valueType": "System.Boolean",
       "hasDefaultValue": true,

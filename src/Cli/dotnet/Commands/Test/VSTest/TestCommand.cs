@@ -94,7 +94,7 @@ public class TestCommand(
         if (ContainsBuiltTestSources(parseResult, GetSettingsCount(settings)))
         {
             var definition = (TestCommandDefinition.VSTest)parseResult.CommandResult.Command;
-            if (parseResult.GetValue(definition.FastBuildOption) && !parseResult.GetValue(definition.NoBuildOption))
+            if (definition.UseFastBuild && !parseResult.GetValue(definition.NoBuildOption))
             {
                 throw new GracefulException(CliCommandStrings.FastBuildRequiresProject);
             }
@@ -240,7 +240,7 @@ public class TestCommand(
         return FromParseResult(parseResult, settings, testSessionCorrelationId, [], msbuildPath);
     }
 
-    private static TestCommand FromParseResult(ParseResult result, string[] settings, string testSessionCorrelationId, string[] additionalBuildProperties, string? msbuildPath = null)
+    internal static TestCommand FromParseResult(ParseResult result, string[] settings, string testSessionCorrelationId, string[] additionalBuildProperties, string? msbuildPath = null)
     {
         var definition = (TestCommandDefinition.VSTest)result.CommandResult.Command;
 
@@ -299,7 +299,7 @@ public class TestCommand(
             CommonOptions.CreateNoLogoOption())
             .CloneWithNoLogo(true);
 
-        bool useFastBuild = result.GetValue(definition.FastBuildOption) && !result.GetValue(definition.NoBuildOption);
+        bool useFastBuild = definition.UseFastBuild && !result.GetValue(definition.NoBuildOption);
         TestCommand testCommand = new(
             useFastBuild
                 ? parsedMSBuildArgs.CloneWithAdditionalProperties(new(new Dictionary<string, string>
